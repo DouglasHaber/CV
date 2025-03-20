@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Portfólio Digital</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>👨‍💻 Douglas Haber</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/svgs/solid/code.svg" type="image/svg+xml">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
 
 <body>
-    <!-- Background Animado -->
     <div class="background"></div>
 
-    <!-- Header e Navegação -->
     <header id="header">
         <div class="container">
             <nav>
@@ -204,8 +204,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Experience Section -->
     <section id="experience">
         <div class="container">
             <div class="content-box">
@@ -266,7 +264,6 @@
         </div>
     </section>
 
-        <!-- Projects Section -->
     <section id="projects">
         <div class="container">
             <div class="content-box">
@@ -321,7 +318,7 @@
             </div>
         </div>
     </section>
-<!-- Contact Section -->
+
     <section id="contact">
         <div class="container">
             <div class="content-box">
@@ -369,7 +366,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="social-links" style="text-align: center;">
@@ -390,17 +386,11 @@
         </div>
     </footer>
 
-<!-- Adicione no <head> para incluir Font Awesome -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Botão para alternar tema -->
-    <div class="theme-toggle">🌓</div>
 
-    <!-- Script para interações do site -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <div class="theme-toggle">🌓</div>
     <script>
-        // Função para efeito de digitação na hero section
         document.addEventListener('DOMContentLoaded', function() {
-            // Mudança de cor do header ao rolar a página
             const header = document.getElementById('header');
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 50) {
@@ -410,7 +400,6 @@
                 }
             });
 
-            // Animação das barras de progresso das habilidades
             const progressBars = document.querySelectorAll('.progress');
             const skillsSection = document.getElementById('skills');
 
@@ -427,9 +416,8 @@
             };
 
             window.addEventListener('scroll', animateSkills);
-            animateSkills(); // Para animar se a seção já estiver visível no carregamento
+            animateSkills(); 
 
-            // Toggle para menu mobile
             const mobileMenuBtn = document.querySelector('.mobile-menu');
             const navLinks = document.querySelector('.nav-links');
 
@@ -437,7 +425,6 @@
                 navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
             });
 
-            // Toggle para tema claro/escuro
             const themeToggle = document.querySelector('.theme-toggle');
             themeToggle.addEventListener('click', function() {
                 document.body.classList.toggle('dark-mode');
