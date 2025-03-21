@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Currículo - Douglas Haber</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        #loading {
+            text-align: center;
+            margin: 50px auto;
+            max-width: 400px;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4158D0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #cv-container {
+            background-color: white;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            margin: 50px auto;
+            max-width: 400px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            border-left: 4px solid #43a047;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4158D0;
+            padding-bottom: 10px;
+        }
+        h1 {
+            color: #4158D0;
+            margin-bottom: 5px;
+            font-size: 22px;
+        }
+        h2 {
+            color: #4158D0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        h3 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .section {
+            margin-bottom: 12px;
+        }
+        .job {
+            margin-bottom: 12px;
+        }
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3px;
+        }
+        .job-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .job-company {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        .job-date {
+            color: #666;
+            text-align: right;
+            font-size: 14px;
+        }
+        p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 3px;
+            margin-bottom: 3px;
+        }
+        .skill {
+            background-color: #f2f2f2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #4158D0;
+            font-size: 12px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 6px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #4158D0, #C850C0);
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #4158D0, #C850C0);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+        .contact-info p {
+            margin: 3px 0;
+        }
+        .languages-section {
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+        .languages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .language-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+        .language-name {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .language-level {
+            color: #666;
+        }
+        .projects-section {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <h2>Gerando seu currículo...</h2>
+        <div class="spinner"></div>
+        <p>Por favor, aguarde enquanto preparamos seu documento.</p>
+    </div>
+    
+    <div id="success-message" class="success-message">
+        <h2>Seu currículo foi gerado com sucesso!</h2>
+        <p>O download deve começar automaticamente. Se não iniciar, clique no botão abaixo.</p>
+        <div class="buttons">
+            <button id="download-again" class="button">Baixar Novamente</button>
+            <a href="index.html" class="button">Voltar ao Site</a>
+        </div>
+    </div>
+    
+    <!-- Conteúdo do CV -->
+    <div id="cv-container">
+        <div class="header">
+            <h1>Douglas Soares Haber</h1>
+            <p class="subtitle">Desenvolvedor Back-End & Analista TI/Funcional</p>
+            <div class="contact-info">
+                <p>📱 (41) 98476-8749 | ✉️ douglashaber10@hotmail.com</p>
+                <p>📍 Curitiba, Paraná | 🌐 25 anos</p>
+                <p>LinkedIn | GitHub | LinkTree</p>
+            </div>
+        </div>
+    
+        <div class="section">
+            <h2>Resumo Profissional</h2>
+            <p>Desenvolvedor back-end apaixonado por criar soluções eficientes e funcionais, com foco em performance e segurança. Em formação em Engenharia de Software, possuo experiência em análise técnica e funcional de requisitos de negócio, transformando-os em soluções robustas e escaláveis.</p>
+        </div>
+    
+        <div class="section">
+            <h2>Experiência Profissional</h2>
+            
+            <div class="job">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Gerente de Equipe</div>
+                        <div class="job-company">Busktraffic</div>
+                    </div>
+                    <div class="job-date">Janeiro 2025 - Presente</div>
+                </div>
+                <p>Atuando no desenvolvimento de soluções back-end e gerenciamento de equipe. Responsável pela implementação de funcionalidades, otimização de performance e manutenção da arquitetura de sistemas.</p>
+            </div>
+            
+            <div class="job">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Desenvolvedor back-end</div>
+                        <div class="job-company">Busktraffic</div>
+                    </div>
+                    <div class="job-date">Maio 2024 - Janeiro 2025</div>
+                </div>
+                <p>Desenvolvimento de aplicações back-end e coordenação de equipe técnica. Implementação de metodologias ágeis, definição de arquitetura e garantia da qualidade das entregas.</p>
+            </div>
+            
+            <div class="job">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Analista Funcional & Desenvolvedor back-end</div>
+                        <div class="job-company">Pallace Markers</div>
+                    </div>
+                    <div class="job-date">Maio 2023 - Maio 2024</div>
+                </div>
+                <p>Atuação na análise de requisitos, documentação funcional e interface entre equipes de negócio e desenvolvimento. Participação ativa no mapeamento de processos e identificação de oportunidades de melhoria.</p>
+            </div>
+            
+            <div class="job">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Aspirante a Oficial</div>
+                        <div class="job-company">Exército Brasileiro - NPOR</div>
+                    </div>
+                    <div class="job-date">Janeiro 2019 - Janeiro 2020</div>
+                </div>
+                <p>Formação militar com desenvolvimento de habilidades de liderança, gestão de equipes, tomada de decisão sob pressão e planejamento estratégico.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Formação Acadêmica</h2>
+            <div class="job">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Bacharelado em Engenharia de Software</div>
+                        <div class="job-company">Universidade - UniBrasil</div>
+                    </div>
+                    <div class="job-date">Janeiro 2020 - Dezembro 2025</div>
+                </div>
+                <p>Formação em Engenharia de Software com foco em desenvolvimento de sistemas, arquitetura de software, metodologias ágeis e gestão de projetos de TI. Conclusão prevista para 2025.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Habilidades Técnicas</h2>
+            
+            <div class="skill-category">
+                <h3>Desenvolvimento Backend</h3>
+                <div class="skills-list">
+                    <span class="skill">PHP</span>
+                    <span class="skill">Laravel</span>
+                    <span class="skill">Python</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 90%"></div>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>Bancos de Dados</h3>
+                <div class="skills-list">
+                    <span class="skill">MySQL</span>
+                    <span class="skill">MongoDB</span>
+                    <span class="skill">SQL Avançado</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 85%"></div>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>Desenvolvimento Frontend</h3>
+                <div class="skills-list">
+                    <span class="skill">JavaScript</span>
+                    <span class="skill">React</span>
+                    <span class="skill">HTML5 & CSS3</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 80%"></div>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>Ferramentas & DevOps</h3>
+                <div class="skills-list">
+                    <span class="skill">Git & GitHub</span>
+                    <span class="skill">Docker</span>
+                    <span class="skill">Análise Funcional</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 75%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section projects-section">
+            <h2>Projetos</h2>
+            
+            <div class="job">
+                <div class="job-title">Plataforma de Bots</div>
+                <p>Plataforma para criação e gerenciamento de bots do Telegram. Sistema completo com interface administrativa e funcionalidades personalizáveis.</p>
+                <div class="skills-list">
+                    <span class="skill">PHP</span>
+                    <span class="skill">Laravel</span>
+                    <span class="skill">Python</span>
+                    <span class="skill">MongoDB</span>
+                </div>
+            </div>
+            
+            <div class="job">
+                <div class="job-title">Sistema de Gestão Contábil</div>
+                <p>Plataforma para escritório de contabilidade que gerencia toda parte jurídica, fiscal e financeira. Solução completa para controle de processos contábeis.</p>
+                <div class="skills-list">
+                    <span class="skill">React</span>
+                    <span class="skill">Laravel</span>
+                    <span class="skill">PHP</span>
+                    <span class="skill">MySQL</span>
+                </div>
+            </div>
+            
+            <div class="job" style="margin-bottom: 8px;">
+                <div class="job-title">Plataforma/Startup Financeira</div>
+                <p>Sistema para startup financeira com gestão de transações, análise de dados e relatórios personalizados. Interface de administração robusta e segura.</p>
+                <div class="skills-list">
+                    <span class="skill">Laravel</span>
+                    <span class="skill">JavaScript</span>
+                    <span class="skill">PHP</span>
+                    <span class="skill">MySQL</span>
+                </div>
+            </div>
+            
+            <div class="section languages-section" style="margin-bottom: 0;">
+                <h2>Idiomas</h2>
+                <div class="languages-list">
+                    <div class="language-item">
+                        <span class="language-name">Português:</span>
+                        <span class="skill">Nativo</span>
+                    </div>
+                    <div class="language-item">
+                        <span class="language-name">Inglês:</span>
+                        <span class="skill">Intermediário</span>
+                    </div>
+                    <div class="language-item">
+                        <span class="language-name">Espanhol:</span>
+                        <span class="skill">Básico</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generatePDF() {
+            document.getElementById('cv-container').style.display = 'block';
+            
+            const element = document.getElementById('cv-container');
+            
+            const options = {
+                margin: [15, 15, 15, 15], 
+                filename: 'Curriculo_Douglas_Haber.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true,
+                    hotfixes: ["px_scaling"],
+                    putOnlyUsedFonts: true
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            html2pdf()
+                .from(element)
+                .set(options)
+                .toPdf() 
+                .get('pdf')
+                .then((pdf) => {
+                    pdf.setDisplayMode('fullwidth', 'continuous', 'FullScreen');
+                    return pdf;
+                })
+                .save()
+                .then(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('success-message').style.display = 'block';
+                })
+                .catch(err => {
+                    console.error('Erro ao gerar PDF:', err);
+                    alert('Ocorreu um erro ao gerar o PDF: ' + err.message);
+                });
+        }
+        
+        window.onload = function() {
+            document.getElementById('cv-container').style.display = 'none';
+            
+            setTimeout(generatePDF, 1500);
+
+            document.getElementById('download-again').addEventListener('click', function() {
+                document.getElementById('success-message').style.display = 'none';
+                document.getElementById('loading').style.display = 'block';
+                setTimeout(generatePDF, 500);
+            });
+        };
+    </script>
+</body>
+</html>
